@@ -3,12 +3,6 @@ from rest_framework import serializers
 from .models import Article, Comment
 
 
-class ArticleListSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Article
-        fields = ['title', 'content', 'created', 'url']
-
-
 class CommentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
@@ -44,9 +38,21 @@ class CommentDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'content', 'created', 'level', 'parent', 'children']
 
 
+class ArticleListSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Article
+        fields = ['title', 'content', 'created', 'url']
+
+
 class ArticleDetailSerializer(serializers.ModelSerializer):
-    comments = CommentDetailSerializer(many=True)
+    # comments = CommentDetailSerializer(many=True)
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
         fields = ['title', 'content', 'comments']
+
+    def get_comments(self, article):
+        comments = Comment.objects.filter(article=article).filter(level__lte=2)
+        serializer = CommentDetailSerializer(instance=comments, many=True)
+        return serializer.data
