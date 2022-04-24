@@ -25,7 +25,7 @@ class CommentCreate(generics.CreateAPIView):
         return context
 
 
-class ReplyCreate(generics.CreateAPIView):
+class ReplyCreate(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = ReplyCreateSerializer
 
@@ -40,3 +40,9 @@ class ReplyCreate(generics.CreateAPIView):
              'article': article}
         )
         return context
+
+    # if get method we will return only children of this comment
+    def get_queryset(self):
+        comment_pk = self.kwargs.get('pk')
+        comment = get_object_or_404(Comment, id=comment_pk)
+        return Comment.objects.filter(parent=comment)

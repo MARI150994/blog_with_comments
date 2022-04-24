@@ -15,11 +15,12 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         validated_data['article'] = article
         return Comment.objects.create(**validated_data)
 
-
+# TODO maybe 1 serializer enough?
 class ReplyCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['content', 'created']
+        fields = ['content', 'created', 'id', 'parent', 'level']
+        read_only_fields = ['parent']
 
     # bind comment with article
     def create(self, validated_data):
@@ -45,7 +46,7 @@ class ArticleListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ArticleDetailSerializer(serializers.ModelSerializer):
-    # comments = CommentDetailSerializer(many=True)
+    # show only comments on <= 2 level (level start from 0)
     comments = serializers.SerializerMethodField()
 
     class Meta:
