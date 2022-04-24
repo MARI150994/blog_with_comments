@@ -6,5 +6,6 @@ urlpatterns = [
     path('articles/<int:pk>', views.ArticleDetail.as_view(), name='article-detail'),
     path('articles/<int:pk>/comments', views.CommentCreate.as_view(), name='comment-create'),
     # path('articles/<int:art_pk>/comments/<int:pk>', views.CommentCreate.as_view(), name='comment-create'),
+    # TODO awful path
     path('comments/<int:pk>', views.ReplyCreate.as_view(), name='reply-create'),
 ]
