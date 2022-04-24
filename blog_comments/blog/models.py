@@ -12,7 +12,7 @@ class Article(models.Model):
         return f'Article: {self.title}'
 
     class Meta:
-        ordering = ['created']
+        ordering = ['-created']
 
 
 # Comment model, for hierarchical structure of comments use django-mptt
@@ -27,5 +27,8 @@ class Comment(MPTTModel):
     def __str__(self):
         return f'Comment {self.id} for article: {self.article}'
 
+    class Meta:
+        ordering = ['created']
+
     class MPTTMeta:
-        order_insertion_by = ['-created']
+        order_insertion_by = ['created']
