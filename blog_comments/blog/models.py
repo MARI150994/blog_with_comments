@@ -12,7 +12,7 @@ class Article(models.Model):
         return f'Article: {self.title}'
 
     class Meta:
-        ordering = ['-created']
+        ordering = ['created']
 
 
 # Comment model, for hierarchical structure of comments use django-mptt
