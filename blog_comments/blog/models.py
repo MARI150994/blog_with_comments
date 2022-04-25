@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 
 
@@ -26,6 +27,9 @@ class Comment(MPTTModel):
 
     def __str__(self):
         return f'Comment {self.id} for article: {self.article}'
+
+    def get_absolute_url(self):
+        return reverse('comment-detail', kwargs={'pk': self.id})
 
     class Meta:
         ordering = ['created']

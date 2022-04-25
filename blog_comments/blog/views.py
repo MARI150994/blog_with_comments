@@ -4,16 +4,19 @@ from .models import Article, Comment
 from .serializers import ArticleListSerializer, ArticleDetailSerializer, CommentCreateSerializer, ReplyCreateSerializer
 
 
+# get list of articles, create new article
 class ArticleList(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleListSerializer
 
 
+# show article detail and all comment for this article (to 3 level)
 class ArticleDetail(generics.RetrieveAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleDetailSerializer
 
 
+# create comment for article (1 level comment)
 class CommentCreate(generics.CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentCreateSerializer
@@ -25,6 +28,7 @@ class CommentCreate(generics.CreateAPIView):
         return context
 
 
+# create reply on comments, show all subcomments
 class ReplyCreate(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = ReplyCreateSerializer
