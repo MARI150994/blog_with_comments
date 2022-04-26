@@ -44,6 +44,7 @@ class CommentHierarchySerializer(serializers.HyperlinkedModelSerializer):
                 return []
 
 
+# create comment for comment
 class ReplyCreateSerializer(serializers.HyperlinkedModelSerializer):
     children = serializers.SerializerMethodField()
 
@@ -84,13 +85,12 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['title', 'content', 'comments']
+        fields = ['title', 'content', 'created', 'comments']
 
     def get_comments(self, article):
         # show comments with level 0 because we use tree structure serializer
         # and don't want repeat subcomments with another level
         comments = Comment.objects.filter(article=article).filter(level=0)
-        print('context', self.context.get('request'))
         serializer = CommentHierarchySerializer(
             instance=comments, many=True,
             context={'request': self.context.get('request')}

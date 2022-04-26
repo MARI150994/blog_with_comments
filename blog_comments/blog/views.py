@@ -5,7 +5,7 @@ from .serializers import ArticleListSerializer, ArticleDetailSerializer, Comment
 
 
 # get list of articles, create new article
-class ArticleCreateAPIView(generics.ListCreateAPIView):
+class ArticleListCreateAPIView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleListSerializer
 
