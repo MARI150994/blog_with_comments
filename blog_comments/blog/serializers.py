@@ -17,7 +17,8 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         return Comment.objects.create(**validated_data)
 
 
-# this serializer called from ArticleDetailSerializer, create hierarchical data for article detail
+# this serializer called from ArticleDetailSerializer,
+# create hierarchical structure of comments up to 3level(2lvl in mptt)
 class CommentHierarchySerializer(serializers.HyperlinkedModelSerializer):
     children = serializers.SerializerMethodField()
 
@@ -26,7 +27,7 @@ class CommentHierarchySerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'parent_id', 'url', 'content', 'created', 'level', 'children']
 
     def get_children(self, comment):
-        # we must show comments only to 3 level on article page (in our 'mptt' case to 2 level)
+        # we must show comments only up to 3d level on article page (in our 'mptt' case up to 2 level)
         # we serialize only <= 1 level (because in this case 2 'mptt' level will be show)
         if comment.level <= 1:
             return CommentHierarchySerializer(
@@ -35,7 +36,7 @@ class CommentHierarchySerializer(serializers.HyperlinkedModelSerializer):
             ).data
         # crete link for children of comment with 3 level (in mptt 2 level)
         else:
-            # return link for children if there are children
+            # return link for children if there are children instead of list of children
             if comment.get_children():
                 request = self.context.get('request')
                 return request.build_absolute_uri(comment.get_absolute_url())
@@ -44,7 +45,7 @@ class CommentHierarchySerializer(serializers.HyperlinkedModelSerializer):
                 return []
 
 
-# create comment for comment
+# create sub-comment for some comment
 class ReplyCreateSerializer(serializers.HyperlinkedModelSerializer):
     children = serializers.SerializerMethodField()
 
@@ -53,8 +54,9 @@ class ReplyCreateSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'parent_id', 'url', 'content', 'created', 'level', 'children']
         read_only_fields = ['id', 'url', 'created', 'level', 'children', 'parent_id']
 
+    # create hierarchical structure with comments
     def get_children(self, comment):
-        # instead of CommentHierarchySerializer now we should show all children
+        # instead of CommentHierarchySerializer now we should show all children for this comment
         return ReplyCreateSerializer(
             comment.get_children(), many=True,
             context={'request': self.context.get('request')}
@@ -78,7 +80,7 @@ class ArticleListSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {'content': {'write_only': True}}
 
 
-# show comments hierarchy to 3 level (in mptt to 2 level)
+# show comments hierarchy up to 3 level (in mptt to 2 level)
 class ArticleDetailSerializer(serializers.ModelSerializer):
     # show only comments on <= 2 level (level start from 0)
     comments = serializers.SerializerMethodField()
@@ -89,7 +91,7 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
 
     def get_comments(self, article):
         # show comments with level 0 because we use tree structure serializer
-        # and don't want repeat subcomments with another level
+        # and don't want repeat sub-comments with another level
         comments = Comment.objects.filter(article=article).filter(level=0)
         serializer = CommentHierarchySerializer(
             instance=comments, many=True,

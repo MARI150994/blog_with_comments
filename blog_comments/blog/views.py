@@ -10,13 +10,13 @@ class ArticleListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ArticleListSerializer
 
 
-# show article detail and all comment for this article (to 3 level)
+# show article detail and all comment for this article (up to 3 level)
 class ArticleDetailAPIView(generics.RetrieveAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleDetailSerializer
 
 
-# create comment for article (1 level comment, in mptt 0 level)
+# create comment for article (create 1st level comment, in mptt 0 level)
 class CommentCreateAPIView(generics.CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentCreateSerializer
@@ -28,7 +28,7 @@ class CommentCreateAPIView(generics.CreateAPIView):
         return context
 
 
-# create reply on comments, show all subcomments
+# create reply to comment, show all sub-comments
 class ReplyListCreateAPIView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = ReplyCreateSerializer
@@ -45,7 +45,7 @@ class ReplyListCreateAPIView(generics.ListCreateAPIView):
         )
         return context
 
-    # if get method we will return only children of this comment
+    # return only childrens of this comment
     def get_queryset(self):
         comment_pk = self.kwargs.get('pk')
         comment = get_object_or_404(Comment, id=comment_pk)
