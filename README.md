@@ -11,7 +11,7 @@
 ### **Запуск приложения**
 * Для запуска Вам понадобится git, docker, docker-compose
 * склонируйте данный репозиторий с помощью команды: _git clone git@github.com:MARI150994/blog_with_comments.git_
-* перейдите в паку block_comments: cd block_comments
+* перейдите в паку block_with_comments/block_comments
 * соберите и запустите докер образ: _docker-compose up -d --build app_
 * если собираете образ первый раз, то примените миграции: _docker-compose exec app python manage.py migrate_
 * используйте перечисленные ниже endpoints для тестирования ресурсов API,
